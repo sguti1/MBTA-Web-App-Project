@@ -1,1 +1,0 @@
-lat, lng = get_lat_lng("Harvard Square")

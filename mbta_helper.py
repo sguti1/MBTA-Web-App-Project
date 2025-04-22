@@ -55,15 +55,14 @@ def get_lat_lng(place_name: str) -> tuple[str, str]:
 
     return coords[1],coords[0] #return as a tuple
 
+
 def get_nearest_station(latitude: str, longitude: str) -> tuple[str, bool]:
     """
     Given latitude and longitude strings, return a (station_name, wheelchair_accessible) tuple for the nearest MBTA station to the given coordinates.
 
     See https://api-v3.mbta.com/docs/swagger/index.html#/Stop/ApiWeb_StopController_index for URL formatting requirements for the 'GET /stops' API.
     """
- 
-    mbta_data = get_json(url)
-    url = f"{MBTA_BASE_URL}?api_key={MBTA_API_KEY}&filter[latitude]={latitude}&filter[longitude]={longitude}&sort=distance"
+    url = f"{MBTA_BASE_URL}?api_key={MBTA_API_KEY}&filter[latitude]={latitude}&filter[longitude]={longitude}&filter[radius]=0.03&filter[route_type]=0,1,2&sort=distance"
     mbta_data = get_json(url)
 
     if not mbta_data["data"]:
@@ -94,16 +93,14 @@ def main():
     Test the functions here.
     """
     try:
-        # lat, lng = get_lat_lng("Harvard University")
-        # lat, lng = get_lat_lng("Boston Commons")
         lat, lng = get_lat_lng("Government Center")
         print("Latitude:", lat, "Longitude:", lng)
 
-        # station_name, accessible = find_stop_near("Harvard University")
-        #station_name, accessible = find_stop_near("Boston Commons")
-        station_name, accessible = find_stop_near("Government Center")
+        station_name, accessible, stop_lat, stop_lng = find_stop_near("Government Center")
         print(f"Nearest MBTA stop: {station_name}")
         print(f"Wheelchair accessible: {'Yes' if accessible else 'No'}")
+        print(f"Station Coordinates: {stop_lat}, {stop_lng}")
+
     except Exception as e:
         print("Error:", e)
 
