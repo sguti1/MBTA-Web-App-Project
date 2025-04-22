@@ -77,25 +77,12 @@ def get_nearest_station(latitude: str, longitude: str) -> tuple[str, bool]:
 
     return station_name, wheelchair_accessible
 
-
-
 def find_stop_near(place_name: str) -> tuple[str, bool]:
     """
-    Tries up to 3 Mapbox geocoding results to find the nearest MBTA stop.
+    Given a place name, return the nearest MBTA stop and wheelchair accessibility.
     """
-    formatted_place = place_name.replace(" ", "%20")
-    url = f"{MAPBOX_BASE_URL}/{formatted_place}.json?access_token={MAPBOX_TOKEN}"
-    map_data = get_json(url)
-
-    for feature in map_data.get("features", [])[:3]:  # Try up to 3 locations
-        coords = feature["center"]
-        lat, lng = coords[1], coords[0]
-        station_name, accessible = get_nearest_station(lat, lng)
-
-        if station_name != "No nearby stations found 😕":
-            return station_name, accessible
-
-    return "No stations found for any of the top 3 locations 😞", False
+    lat, lng = get_lat_lng(place_name)
+    return get_nearest_station(lat, lng)
 
 
 def main():
