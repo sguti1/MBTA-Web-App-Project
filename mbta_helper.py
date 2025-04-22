@@ -93,9 +93,9 @@ def main():
     """
     You should test all the above functions here
     """
-    lat, lng = get_lat_lng("Harvard University")
+    lat, lng = get_lat_lng("Harvard Square")
     print(lat, lng)
-    print(find_stop_near("Haravrd Univeristy"))
+    print(find_stop_near("Harvard Square"))
 
 
 if __name__ == "__main__":
