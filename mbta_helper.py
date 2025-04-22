@@ -81,21 +81,36 @@ def get_nearest_station(latitude: str, longitude: str) -> tuple[str, bool]:
 
 def find_stop_near(place_name: str) -> tuple[str, bool]:
     """
-    Given a place name or address, return the nearest MBTA stop and whether it is wheelchair accessible.
-
-    This function might use all the functions above.
+    Tries up to 3 Mapbox geocoding results to find the nearest MBTA stop.
     """
-    lat, lng = get_lat_lng(place_name)
-    return get_nearest_station(lat, lng)
+    formatted_place = place_name.replace(" ", "%20")
+    url = f"{MAPBOX_BASE_URL}/{formatted_place}.json?access_token={MAPBOX_TOKEN}"
+    map_data = get_json(url)
+
+    for feature in map_data.get("features", [])[:3]:  # Try up to 3 locations
+        coords = feature["center"]
+        lat, lng = coords[1], coords[0]
+        station_name, accessible = get_nearest_station(lat, lng)
+
+        if station_name != "No nearby stations found 😕":
+            return station_name, accessible
+
+    return "No stations found for any of the top 3 locations 😞", False
 
 
 def main():
     """
-    You should test all the above functions here
+    Test the functions here.
     """
-    lat, lng = get_lat_lng("Harvard University")
-    print(lat, lng)
-    print(find_stop_near("Haravrd Univeristy"))
+    try:
+        lat, lng = get_lat_lng("Harvard University")
+        print("Latitude:", lat, "Longitude:", lng)
+
+        station_name, accessible = find_stop_near("Harvard University")
+        print(f"Nearest MBTA stop: {station_name}")
+        print(f"Wheelchair accessible: {'Yes' if accessible else 'No'}")
+    except Exception as e:
+        print("Error:", e)
 
 
 if __name__ == "__main__":
