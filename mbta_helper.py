@@ -103,10 +103,14 @@ def main():
     Test the functions here.
     """
     try:
-        lat, lng = get_lat_lng("Harvard University")
+        # lat, lng = get_lat_lng("Harvard University")
+        # lat, lng = get_lat_lng("Boston Commons")
+        lat, lng = get_lat_lng("Government Center")
         print("Latitude:", lat, "Longitude:", lng)
 
-        station_name, accessible = find_stop_near("Harvard University")
+        # station_name, accessible = find_stop_near("Harvard University")
+        #station_name, accessible = find_stop_near("Boston Commons")
+        station_name, accessible = find_stop_near("Government Center")
         print(f"Nearest MBTA stop: {station_name}")
         print(f"Wheelchair accessible: {'Yes' if accessible else 'No'}")
     except Exception as e:
