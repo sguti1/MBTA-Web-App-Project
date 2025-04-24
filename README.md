@@ -16,7 +16,7 @@ This project is a Python-based web API client that allows users in Massachusetts
 
 ### Development Process
 
-The development process started by understanding the two APIs (Mapbox and MBTA) and how they could connect. One of the things that went well was breaking the problem down into small functions: one for getting JSON data, one for getting coordinates, and another for getting MBTA stops. Using a helper function like `get_json()` made the code cleaner and more reusable. A major challenge was figuring out how to properly integrate MBTA train stops. At first, it seemed like the problem was with the coordinates or query parameters, but after a lot of debugging and testing, it turned out the issue was actually with the base URL we were using to call the MBTA API. Once that was corrected, the nearest stations were returned as expected. Printing URLs and testing them manually in a browser helped pinpoint this issue. Having clear documentation for both APIs was also a big help.
+The development process started by understanding the two APIs (Mapbox and MBTA) and how they could connect. One of the things that went well was breaking the problem down into small functions: one for getting JSON data, one for getting coordinates, and another for getting MBTA stops. Using a helper function like `get_json()` made the code cleaner and more reusable. A major challenge was figuring out how to properly integrate MBTA train stops. At first, it seemed like the problem was with the coordinates or query parameters, but after a lot of debugging and testing, it turned out the issue was actually with the base URL we were using to call the Mapbox API. Once that was corrected, the nearest stations were returned as expected. Printing URLs and testing them manually in a browser helped pinpoint this issue. Having clear documentation for both APIs was also a big help.
 
 ### Team Workflow
 
@@ -27,4 +27,4 @@ This project was completed as a partner project, and the workflow went smoothly 
 Through this project, we gained a better understanding of how to use online tools (APIs) to get real-world data and connect different systems together. We learned how to work with the data these tools return, which is often layered and complex, and how important it is to keep our code organized and easy to check for mistakes. One key takeaway was realizing how small details—like using the wrong kind of number—can prevent things from working properly. Using ChatGPT and other AI tools was a big help throughout the process. They guided us when we got stuck, offered clearer ways to write parts of our program, and helped us understand what we were seeing in the data. 
 
 ### Final Output with Working Station
-![Working result after fixing the base URL](Screenshot1.png)
+![Working result after fixing the base URL](static/Screenshot1.png)
