@@ -15,13 +15,9 @@ MBTA_API_KEY = os.getenv("MBTA_API_KEY")
 MAPBOX_BASE_URL = "https://api.mapbox.com/geocoding/v5/mapbox.places"
 MBTA_BASE_URL = "https://api-v3.mbta.com/stops"
 
-#YOU CAN IGNORE THIS FOR NOW, IT WAS ME JUST TESTING OUT THE API HAHA
-# city = "Boston"
-# url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{city}.json?access_token={MAPBOX_TOKEN}"
-# print(url)
-
 
 # A little bit of scaffolding if you want to use it
+
 
 def get_json(url: str) -> dict:
     """
@@ -32,10 +28,8 @@ def get_json(url: str) -> dict:
 
     with urllib.request.urlopen(url) as response:
         response_text = response.read().decode("utf-8")
-        
-        return json.loads(response_text)
 
-    
+        return json.loads(response_text)
 
 
 def get_lat_lng(place_name: str) -> tuple[str, str]:
@@ -44,7 +38,7 @@ def get_lat_lng(place_name: str) -> tuple[str, str]:
 
     See https://docs.mapbox.com/api/search/geocoding/ for Mapbox Geocoding API URL formatting requirements.
     """
-    
+
     formatted_place = place_name.replace(" ", "%20")
     url = f"{MAPBOX_BASE_URL}/{formatted_place}.json?access_token={MAPBOX_TOKEN}"
     map_data = get_json(url)
@@ -52,8 +46,7 @@ def get_lat_lng(place_name: str) -> tuple[str, str]:
     # coords = data["features"][0]["geometry"]["coordinates"]
     coords = map_data["features"][0]["center"]  # this comes from a dict
 
-
-    return coords[1],coords[0] #return as a tuple
+    return coords[1], coords[0]  # return as a tuple
 
 
 def get_nearest_station(latitude: str, longitude: str) -> tuple[str, bool]:
@@ -96,7 +89,9 @@ def main():
         lat, lng = get_lat_lng("Government Center")
         print("Latitude:", lat, "Longitude:", lng)
 
-        station_name, accessible, stop_lat, stop_lng = find_stop_near("Government Center")
+        station_name, accessible, stop_lat, stop_lng = find_stop_near(
+            "Government Center"
+        )
         print(f"Nearest MBTA stop: {station_name}")
         print(f"Wheelchair accessible: {'Yes' if accessible else 'No'}")
         print(f"Station Coordinates: {stop_lat}, {stop_lng}")
