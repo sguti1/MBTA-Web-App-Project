@@ -12,7 +12,7 @@ MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
 MBTA_API_KEY = os.getenv("MBTA_API_KEY")
 
 # Useful base URLs (you need to add the appropriate parameters for each API request)
-MAPBOX_BASE_URL = "https://api.mapbox.com/geocoding/v5/mapbox.places"
+# MAPBOX_BASE_URL = "https://api.mapbox.com/geocoding/v5/mapbox.places"
 MAPBOX_BASE_URL = "https://api.mapbox.com/search/searchbox/v1/forward?"
 MBTA_BASE_URL = "https://api-v3.mbta.com/stops"
 
@@ -48,10 +48,12 @@ def get_lat_lng(place_name: str) -> tuple[str, str]:
 
     # coords = data["features"][0]["geometry"]["coordinates"]
     # print(map_data["features"][0].keys())
-    coords = map_data["features"][0]["properties"]["coordinates"]  # this comes from a dict
+    coords = map_data["features"][0]["properties"][
+        "coordinates"
+    ]  # this comes from a dict
     print(coords)
 
-    return coords['latitude'],coords['longitude'] #return as a tuple
+    return coords["latitude"], coords["longitude"]  # return as a tuple
 
 
 def get_nearest_station(latitude: str, longitude: str) -> tuple[str, bool]:
@@ -95,7 +97,9 @@ def main():
         lat, lng = get_lat_lng("Harvard University, ma")
         print("Latitude:", lat, "Longitude:", lng)
 
-        station_name, accessible, stop_lat, stop_lng = find_stop_near("Harvard University")
+        station_name, accessible, stop_lat, stop_lng = find_stop_near(
+            "Harvard University"
+        )
         print(f"Nearest MBTA stop: {station_name}")
         print(f"Wheelchair accessible: {'Yes' if accessible else 'No'}")
         print(f"Station Coordinates: {stop_lat}, {stop_lng}")
