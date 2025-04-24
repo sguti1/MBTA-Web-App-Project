@@ -16,13 +16,9 @@ MAPBOX_BASE_URL = "https://api.mapbox.com/geocoding/v5/mapbox.places"
 MAPBOX_BASE_URL = "https://api.mapbox.com/search/searchbox/v1/forward?"
 MBTA_BASE_URL = "https://api-v3.mbta.com/stops"
 
-#YOU CAN IGNORE THIS FOR NOW, IT WAS ME JUST TESTING OUT THE API HAHA
-# city = "Boston"
-# url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{city}.json?access_token={MAPBOX_TOKEN}"
-# print(url)
-
 
 # A little bit of scaffolding if you want to use it
+
 
 def get_json(url: str) -> dict:
     """
@@ -33,10 +29,8 @@ def get_json(url: str) -> dict:
 
     with urllib.request.urlopen(url) as response:
         response_text = response.read().decode("utf-8")
-        
-        return json.loads(response_text)
 
-    
+        return json.loads(response_text)
 
 
 def get_lat_lng(place_name: str) -> tuple[str, str]:
@@ -45,7 +39,7 @@ def get_lat_lng(place_name: str) -> tuple[str, str]:
 
     See https://docs.mapbox.com/api/search/geocoding/ for Mapbox Geocoding API URL formatting requirements.
     """
-    
+
     formatted_place = place_name.replace(" ", "%20")
     # https://api.mapbox.com/search/searchbox/v1/suggest?q=harvard%2520university&session_token=07fd63ff-37a4-43f8-8196-686b1b08029f&access_token=YOUR_MAPBOX_ACCESS_TOKEN
     url = f"{MAPBOX_BASE_URL}q={formatted_place}&access_token={MAPBOX_TOKEN}"
