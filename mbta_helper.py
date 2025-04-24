@@ -13,6 +13,7 @@ MBTA_API_KEY = os.getenv("MBTA_API_KEY")
 
 # Useful base URLs (you need to add the appropriate parameters for each API request)
 MAPBOX_BASE_URL = "https://api.mapbox.com/geocoding/v5/mapbox.places"
+MAPBOX_BASE_URL = "https://api.mapbox.com/search/searchbox/v1/forward?"
 MBTA_BASE_URL = "https://api-v3.mbta.com/stops"
 
 #YOU CAN IGNORE THIS FOR NOW, IT WAS ME JUST TESTING OUT THE API HAHA
@@ -46,14 +47,17 @@ def get_lat_lng(place_name: str) -> tuple[str, str]:
     """
     
     formatted_place = place_name.replace(" ", "%20")
-    url = f"{MAPBOX_BASE_URL}/{formatted_place}.json?access_token={MAPBOX_TOKEN}"
+    # https://api.mapbox.com/search/searchbox/v1/suggest?q=harvard%2520university&session_token=07fd63ff-37a4-43f8-8196-686b1b08029f&access_token=YOUR_MAPBOX_ACCESS_TOKEN
+    url = f"{MAPBOX_BASE_URL}q={formatted_place}&access_token={MAPBOX_TOKEN}"
+    # print(url)
     map_data = get_json(url)
 
     # coords = data["features"][0]["geometry"]["coordinates"]
-    coords = map_data["features"][0]["center"]  # this comes from a dict
+    # print(map_data["features"][0].keys())
+    coords = map_data["features"][0]["properties"]["coordinates"]  # this comes from a dict
+    print(coords)
 
-
-    return coords[1],coords[0] #return as a tuple
+    return coords['latitude'],coords['longitude'] #return as a tuple
 
 
 def get_nearest_station(latitude: str, longitude: str) -> tuple[str, bool]:
@@ -62,7 +66,8 @@ def get_nearest_station(latitude: str, longitude: str) -> tuple[str, bool]:
 
     See https://api-v3.mbta.com/docs/swagger/index.html#/Stop/ApiWeb_StopController_index for URL formatting requirements for the 'GET /stops' API.
     """
-    url = f"{MBTA_BASE_URL}?api_key={MBTA_API_KEY}&filter[latitude]={latitude}&filter[longitude]={longitude}&filter[radius]=0.03&filter[route_type]=0,1,2&sort=distance"
+    url = f"{MBTA_BASE_URL}?api_key={MBTA_API_KEY}&filter[latitude]={latitude}&filter[longitude]={longitude}&filter[radius]=0.01&filter[route_type]=0,1,2&sort=distance"
+    print(url)
     mbta_data = get_json(url)
 
     if not mbta_data["data"]:
@@ -93,10 +98,10 @@ def main():
     Test the functions here.
     """
     try:
-        lat, lng = get_lat_lng("Government Center")
+        lat, lng = get_lat_lng("Harvard University, ma")
         print("Latitude:", lat, "Longitude:", lng)
 
-        station_name, accessible, stop_lat, stop_lng = find_stop_near("Government Center")
+        station_name, accessible, stop_lat, stop_lng = find_stop_near("Harvard University")
         print(f"Nearest MBTA stop: {station_name}")
         print(f"Wheelchair accessible: {'Yes' if accessible else 'No'}")
         print(f"Station Coordinates: {stop_lat}, {stop_lng}")
