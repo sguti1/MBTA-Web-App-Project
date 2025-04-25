@@ -1,7 +1,6 @@
 import os
-import json
+import json, requests
 import urllib.request
-
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -10,11 +9,13 @@ load_dotenv()
 # Get API keys from environment variables
 MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
 MBTA_API_KEY = os.getenv("MBTA_API_KEY")
+WEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
 # Useful base URLs (you need to add the appropriate parameters for each API request)
 # MAPBOX_BASE_URL = "https://api.mapbox.com/geocoding/v5/mapbox.places"
 MAPBOX_BASE_URL = "https://api.mapbox.com/search/searchbox/v1/forward?"
 MBTA_BASE_URL = "https://api-v3.mbta.com/stops"
+SUN_API = "https://api.sunrise-sunset.org"
 
 
 # A little bit of scaffolding if you want to use it
@@ -51,7 +52,6 @@ def get_lat_lng(place_name: str) -> tuple[str, str]:
     coords = map_data["features"][0]["properties"][
         "coordinates"
     ]  # this comes from a dict
-    print(coords)
 
     return coords["latitude"], coords["longitude"]  # return as a tuple
 
@@ -62,13 +62,11 @@ def get_nearest_station(latitude: str, longitude: str) -> tuple[str, bool]:
 
     See https://api-v3.mbta.com/docs/swagger/index.html#/Stop/ApiWeb_StopController_index for URL formatting requirements for the 'GET /stops' API.
     """
-    url = f"{MBTA_BASE_URL}?api_key={MBTA_API_KEY}&filter[latitude]={latitude}&filter[longitude]={longitude}&filter[radius]=0.01&filter[route_type]=0,1,2&sort=distance"
-    print(url)
+    url = f"{MBTA_BASE_URL}?api_key={MBTA_API_KEY}&filter[latitude]={latitude}&filter[longitude]={longitude}&filter[radius]=0.02&filter[route_type]=0,1,2&sort=distance"
     mbta_data = get_json(url)
 
     if not mbta_data["data"]:
         return "No nearby stations found 😕", False, None, None
-
     first_stop = mbta_data["data"][0]
     station_name = first_stop["attributes"]["name"]
     wheelchair_code = first_stop["attributes"]["wheelchair_boarding"]
@@ -88,21 +86,63 @@ def find_stop_near(place_name: str) -> tuple[str, bool]:
     lat, lng = get_lat_lng(place_name)
     return get_nearest_station(lat, lng)
 
+def sun_time(latitude: str, longitude: str) -> tuple[str, str]:
+    '''
+    Given latitude and longitude strings, return the sunrise and sunset time for the location.
+    '''
+    import requests
 
+def sun_time(latitude: str, longitude: str) -> tuple[str, str]:
+    '''
+    Given latitude and longitude strings, return the sunrise and sunset time for the location.
+    '''
+    url = f"{SUN_API}/json?lat={latitude}&lng={longitude}"
+    response = requests.get(url)  
+    data = response.json()      
+    
+    sunrise = data["results"]["sunrise"]
+    sunset = data["results"]["sunset"]
+    return sunrise, sunset
+
+def weather_check(latitude: str, longitude: str) -> tuple:
+    """
+    Fetch current weather for the given coords.
+    """
+    url = (
+        f"https://api.openweathermap.org/data/2.5/weather"
+        f"?lat={latitude}&lon={longitude}&appid={WEATHER_API_KEY}&units=metric"
+    )
+    weather_data = get_json(url)
+
+    desc = weather_data["weather"][0]["description"].capitalize()
+    temp = weather_data["main"]["temp"]
+
+    return desc, temp
+
+ 
 def main():
     """
     Test the functions here.
     """
     try:
+
         lat, lng = get_lat_lng("Harvard University, ma")
         print("Latitude:", lat, "Longitude:", lng)
 
         station_name, accessible, stop_lat, stop_lng = find_stop_near(
             "Harvard University"
         )
+
+        sunrise, sunset = sun_time(lat, lng)
+
+        desc, temp = weather_check(lat, lng)
+
         print(f"Nearest MBTA stop: {station_name}")
         print(f"Wheelchair accessible: {'Yes' if accessible else 'No'}")
         print(f"Station Coordinates: {stop_lat}, {stop_lng}")
+        print(f"Sun Can Be Seen From: {sunrise} to {sunset}")
+        print(f"Weather Today: {desc}, {temp}°C")
+
 
     except Exception as e:
         print("Error:", e)

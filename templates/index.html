@@ -1,45 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Nearest MBTA Stop</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
+    <title>MBTA Info and Weather</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
         h1 { text-align: center; color: #1a73e8; }
         form { text-align: center; margin-bottom: 20px; }
         input, button { padding: 8px; margin: 5px; }
-        .result-box { background: #f9f9f9; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; text-align: center; }
+        .info-box { background: #fff; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         .map { text-align: center; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <h1>Find the Nearest MBTA Station</h1>
+<h1>MBTA Station Info & Weather</h1>
 
-    <form method="POST">
-        <input type="text" name="place" placeholder="Enter a location" required>
-        <button type="submit">Search</button>
-    </form>
+<form method="POST">
+    <input type="text" name="place" placeholder="Enter a location" required>
+    <button type="submit">Search</button>
+</form>
 
-    {% if error %}
-        <p style="color: red; text-align: center;">{{ error }}</p>
-    {% endif %}
+{% if error %}
+    <p style="color: red; text-align: center;">{{ error }}</p>
+{% endif %}
 
-    {% if stop_name %}
-        <div class="result-box">
-            <p><strong>You searched:</strong> {{ user_place }}</p>
-            <p><strong>Nearest MBTA stop:</strong> {{ stop_name }}</p>
-            <p><strong>Wheelchair accessible:</strong> {{ accessible }}</p>
-        </div>
+{% if stop_name %}
+    <div class="info-box">
+        <p><strong>Location:</strong> {{ user_place }}</p>
+        <p><strong>Nearest MBTA Stop:</strong> {{ stop_name }}</p>
+        <p><strong>Wheelchair Accessible:</strong> {{ accessible }}</p>
+        <p><strong>Station Coordinates:</strong> {{ stop_lat }}, {{ stop_lng }}</p>
+        <p><strong>Sunrise:</strong> {{ sunrise }} | <strong>Sunset:</strong> {{ sunset }}</p>
+        <p><strong>Current Weather:</strong> {{ weather_desc }}, {{ temperature }}°C</p>
+    </div>
 
-        <div class="map">
-            <img 
-                src="https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s+000({{ user_lng }},{{ user_lat }}),pin-s+008000({{ stop_lng }},{{ stop_lat }})/{{ user_lng }},{{ user_lat }},13/600x400?access_token={{ mapbox_token }}" 
-                alt="Map showing your location and MBTA stop" 
-                style="border-radius: 8px;">
-        </div>
-    {% endif %}
+    <div class="map">
+        <img 
+        src="https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s+000({{ user_lng }},{{ user_lat }}),pin-s+008000({{ stop_lng }},{{ stop_lat }})/{{ user_lng }},{{ user_lat }},13/600x400?access_token={{ mapbox_token }}" 
+        alt="Map with MBTA stop"
+        style="max-width: 100%; border-radius: 10px;">
+      
+    </div>
+{% endif %}
 
 </body>
 </html>
